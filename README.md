@@ -30,9 +30,12 @@ end
 - delete VM `vagrant destroy`
 - pause VM `vagrant halt`
 - to update `vagrant reload`
-- access VM `vagrant ssh`
+- access VM through SSH `vagrant ssh`
 - exit VM `vagrant logout`
+- reload `reload`
 
 
 - `systemctl status/restart/start/stop {package name`}
 - `apt-get package manager install/remove/update/upgrade {package name}`
+- exit VM `exit`
+- super user do (equiv to administrator) `sudo`
