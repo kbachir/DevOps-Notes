@@ -25,6 +25,7 @@ This page and the seeding is only accessible when a database is available and th
 ### A fibonacci number generator
 
 ``localhost:3000/fibonacci/{index}``
+192.168.10.100/fibonacci/5 < this will give us a generated number thru fibonacci method >
 
 This page has be implemented poorly on purpose to produce a slow running function. This can be used for performance testing and crash recovery testing.
 

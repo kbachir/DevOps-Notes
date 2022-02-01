@@ -10,6 +10,7 @@ Vagrant.configure("2") do |config|
 
 # creating a provision file that syncs
  config.vm.provision "shell", path: "init.sh"
+ 
 
 # to config synced folder:
  config.vm.synced_folder ".", "/home/vagrant/app"
