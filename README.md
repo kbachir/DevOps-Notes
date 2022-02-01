@@ -39,3 +39,5 @@ end
 - `apt-get package manager install/remove/update/upgrade {package name}`
 - exit VM `exit`
 - super user do (equiv to administrator) `sudo`
+- 
+![Dev Envrionment Diagram](https://user-images.githubusercontent.com/98312982/151946623-1b12406e-1e10-401b-8478-d8c63ea2371d.png)
