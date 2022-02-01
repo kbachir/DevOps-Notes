@@ -1,22 +1,18 @@
-$script = <<-'SCRIPT'
-apt-get update -y
-apt-get upgrade -y
-apt-get install -y nginx
-SCRIPT
 
 
 Vagrant.configure("2") do |config|
 
- config.vm.box = "ubuntu/xenial64"
 # creating a virtual machine ubuntu 
-
-# creeating a private network with ip
+ config.vm.box = "ubuntu/xenial64"
+ 
+# creating a private network with ip
  config.vm.network "private_network", ip: "192.168.10.100"
 
- # provisioning runs when you start a VM for the first time.
- # in this case it's running the script written above
- config.vm.provision "shell", inline: $script
- 
+# creating a provision file that syncs
+ config.vm.provision "shell", path: "init.sh"
 
+# to config synced folder:
+ config.vm.synced_folder ".", "/home/vagrant/app"
+                        # . means everything from specified location
 
 end
