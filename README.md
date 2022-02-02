@@ -13,6 +13,7 @@
 
 ### Monolith, 2 tier & Microservices Architecture
 - A single box or that contains the frontend, backend, database. Essentially the monolith of the entire programme. 
+- We deploy in cloud services like AWS or Azure, turning the "single box architecture into 2 tier architecture".
 
 
 ### Development Env
@@ -85,6 +86,7 @@ _Note that “r” is for read, “w” is for write, and “x” is for execute
 
 
 ### Configuring provision.sh
+< a series of administrative actions _(superuser do)_ that install and update a number of required packages on VM startup. Automates a lot of the process for testing the app kit provided in ./app >
 
 `sudo apt-get update -y`
 `sudo apt-get upgrade -y`
@@ -113,7 +115,7 @@ creating a provision file that syncs a local file to the VM
 
 ### Configuring a synced folder
  config.vm.synced_folder ".", "/home/vagrant/app"
-                        # . means everything from specified location
+                        _# . means everything from specified location_
 
 
 ### Nano Commands
@@ -126,6 +128,8 @@ https://gist.githubusercontent.com/harssh/7638233/raw/5c491cfc633d5c83f634a917dd
 
 
 ### Ruby Commands
+
+< installed a package that automatically scanned for and installed dependencies for our ruby file: >
 
 Run `gem install bundler` to install package
 Run `bundler` to install dependencies
