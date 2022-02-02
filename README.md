@@ -78,7 +78,9 @@ Linux has loads of different distributions, so how do you find out which distro 
 _Note that “r” is for read, “w” is for write, and “x” is for execute._ 
 
 
-### Bash Scripting
+### Bash Scripting _(shebang!)_
+
+< instructs the OS on which interpeter to run >
 
 .sh = shell extension
 
@@ -115,7 +117,7 @@ creating a provision file that syncs a local file to the VM
 
 ### Configuring a synced folder
  config.vm.synced_folder ".", "/home/vagrant/app"
-                        _# . means everything from specified location_
+                        # _. means everything from specified location_
 
 
 ### Nano Commands
@@ -132,6 +134,7 @@ https://gist.githubusercontent.com/harssh/7638233/raw/5c491cfc633d5c83f634a917dd
 < installed a package that automatically scanned for and installed dependencies for our ruby file: >
 
 Run `gem install bundler` to install package
+
 Run `bundler` to install dependencies
 
 To run the tests `rake <filename>`, this time it was `rake script`. 
