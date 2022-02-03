@@ -9,8 +9,13 @@ sudo apt-get install nodejs -y
 curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 sudo apt-get install nodejs -y
 sudo npm install pm2 -g
+sudo cp /srv/provisioning/vagrant/default /etc/nginx/sites-available/default
+sudo systemctl restart nginx
 
-cd /home/vagrant/app/app/app
+
+cd /srv/provisioning/vagrant/app
+echo "export DB_HOST='mongodb://192.168.10.150:27017/posts'" >> ~/.bashrc
+source ~/.bashrc
 npm install forever -g
 npm install
-forever start app.js
+#forever start app.js
