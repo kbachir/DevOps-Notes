@@ -215,7 +215,7 @@ config.vm.define "db" do |db|
 ```
 < _we're configuring a second VM on the same vagrant file and assinging a name in the quotation marks_ >
 
-
+![2 Tier Architecture Diagram](https://user-images.githubusercontent.com/98312982/152544826-a46f71c6-6fb6-4358-a55c-95c747d2268d.png)
 
 vagrant status
 vagrant ssh app
