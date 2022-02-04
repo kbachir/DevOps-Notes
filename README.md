@@ -153,7 +153,7 @@ To run the tests `rake <filename>`, this time it was `rake script`.
 - Environment variable `env var`
 - Check an env var `printenv key` or `env`
 - Create env var `export` < this will allow the system to recognise the term as an env variable `export LAST_NAME=BACHIR` >
-- Making an env var persistent `sudo nano .bashrc` < will enter .bashrc file, entering an `export <var_name>` will make that variable persistent >
+- Making an env var persistent `sudo nano .bashrc` < _will enter .bashrc file, entering an `export <var_name>` will make that variable persistent_ >
 - delete env var `unset var_name`
 
 
@@ -175,33 +175,198 @@ if(process.env.DB_HOST) {
 
 ### Reverse Proxy with  `nginx`
 
-< Reverse proxies are ways to reroute/redirect traffic. I.e if a user wants to visit port 3000, they shouldn't have to enter the actual code. >
+< _Reverse proxies are ways to reroute/redirect traffic. I.e if a user wants to visit port 3000, they shouldn't have to enter the actual code._ >
 
 show a list of current process `ps aux`
+terminate one of those processes `sudo kill <>`
 
-``` 
-< back all the way out of local files >
+< _back all the way out of local files_ >
 
 cd etc/nginx/sites-available
 `cat` or `nano` default
 
-< in the server block, where location is specified, enter the following instructions: >
+< _in the server block, where location is specified, enter the following instructions:_ >
 
+```
 proxy_pass http://localhost:3000/;
 proxy_http_version 1.1;
 proxy_set_header Upgrade $http_upgrade;
 proxy_set_header Connection 'upgrade';
 proxy_set_header Host $host;
 proxy_cache_bypass $http_upgrade;
+```
+< _this is how we tell nginx to reroute traffic from port 80 to port 3000_ >
 
-< this is how we tell nginx to reroute traffic from port 80 to port 3000 >
+test the syntax: 
+```
+sudo nginx -t
 ```
 
+reload the plugin: 
+```
+sudo systemctl restart nginx
+```
 
 ### Setting up two VMs
-
+```
 config.vm.define "db" do |db|
-  db.vm.box = "ubuntu/xenial64"
-  db.vm.network "private_network", ip: "192.168.10.150"
+- db.vm.box = "ubuntu/xenial64"
+- db.vm.network "private_network", ip: "192.168.10.150"
+```
+< _we're configuring a second VM on the same vagrant file and assinging a name in the quotation marks_ >
 
-< we're configuring a second VM on the same vagrant file and assinging a name in the quotation marks >
+
+
+vagrant status
+vagrant ssh app
+
+sudo apt-get update -y
+sudo apt-get upgrade -y
+
+vagrant ssh db
+
+sudo systemctl mongodob
+
+installing monogodb:
+
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv D68FA50FEA312927
+
+echo "deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+
+//response: deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse
+
+sudo apt-get install -y mongodb-org=3.2.20 mongodb-org-server=3.2.20 mongodb-org-shell=3.2.20 mongodb-org-mongos=3.2.20 mongodb-org-tools=3.2.20
+
+sudo apt-get upgrade
+
+sudo systemctl status mongod
+sudo systemctl restart mongod
+sudo systemctl enable mongod
+sudo systemctl status mongod
+
+cd /etc
+nano mongod.conf
+
+net:
+  port: 27017
+  bindIp: 0.0.0.0
+
+sudo systemctl restart mongod
+sudo systemctl enable mongod
+
+
+ssh into app
+
+export DB_HOST='mongodb://192.168.10.150:27017/posts'
+
+in app/app/app
+node seeds/seed.js
+
+
+
+source ~/.bashrc
+
+### MongoDB in the DB VM
+
+_Installing specific version for this app_
+
+Add a key first:
+```
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv D68FA50FEA312927
+```
+_Run echo command to install and display version install of mongod:_
+```
+echo "deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+
+sudo apt-get update -y
+sudo apt-get upgrade -y
+
+sudo apt-get install -y mongodb-org=3.2.20 mongodb-org-server=3.2.20 mongodb-org-shell=3.2.20 mongodb-org-mongos=3.2.20 mongodb-org-tools=3.2.20
+
+sudo systemctl enable mongod
+sudo systemctl start mongod
+sudo systemctl status mongod
+```
+
+_Adjust bind IP so that mongod has access/routes to the address we want:_
+
+```
+cd /etc
+sudo nano mongod.conf
+```
+
+_Change under #network interfaces bindIp: 127.0.0.1 to bindIp: 0.0.0.0 or bindIp: 192.168.56.4 (the app VM IP)_
+
+```
+sudo systemctl restart mongod
+```
+
+Then switch VMs to app, and create a permanent env variable DB_HOST
+```
+nano ~/.bashrc, add export DB_HOST='mongodb://192.168.56.5:27017/posts'
+source ~/.bashrc
+```
+
+Check it with printenv DB_HOST
+
+_then run:_
+```
+node seeds/seed.js
+npm start
+```
+
+### AWS and Cloud Computing
+### insert image?
+
+- We are using Europe
+- There are usually at least two servers available for each region. 
+- Choose location based on who you're deploying for. ATM we only have access to Ireland servers. 
+
+EC2 (_Amazon Elastic Compute Cloud_)
+
+- Enables you to have multiple instances with as many or as few virtual servers as you need.
+- Allows you to configure security networking, and manage storage. Can scale up and down as needed.
+- Saves for us because migrated servers are managed by Amazon and we can get access to great hardware and internet easily. 
+- Go global in relative seconds. 
+
+Migration Demo App:
+
+_Steps include_:
+
+- Selecting Linux Ubuntu 16.04-18.04
+- Migrate app data
+- Expose needed ports
+- Launch!
+
+_To Begin:_
+
+- Switch location in top right first. `Select Ireland` atm. 
+- Go to EC2
+- `Launch Instance` (orange button)
+- Pick `Ubuntu server 18.04 LS`
+- Leave default rules for T2.micro
+- Leave subnet alone for now
+- Add a new key in the format: `NAME - ENG103A_KARIM`
+- Create a new security group and set the name and desc as above
+- IP Rules: `SSH; TCP; 22; My IP; "My IP Only"` 
+- Review & Launch
+- Create an ~/.ssh folder locally and add the private key file into it.
+- Upon launch, select "Choose an existing key pair" and find `DevOps103a RSA`
+
+Then:
+
+Find the instance and security group:
+- Click `Security Group`
+- Select `Edit inbound rules`
+- Set an inbound rule for `HTTP` and `any ipv4`
+
+After launch, we need to set up some permissions:
+
+- `chmod 400 eng103a.pem` to make the DevOps key only readable only to owner
+- `ssh -i "eng103a.pem" ubuntu@ec2-3-251-89-188.eu-west-1.compute.amazonaws.com` to connect to the machine, found in the instance list > start
+- Go to browser and check ports, it should display NGINX is installed.
+- In the terminal, get your github link and replace `tree/master` with `trunk` like below. We modify it to work with subversion as so: 
+```
+  https://github.com/kbachir/GitNotes/tree/main/Vagrant > https://github.com/kbachir/GitNotes/trunk/Vagrant
+```
+- Run `svn https://github.com/kbachir/GitNotes/trunk/Vagrant`
