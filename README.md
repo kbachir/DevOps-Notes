@@ -370,3 +370,4 @@ After launch, we need to set up some permissions:
   https://github.com/kbachir/GitNotes/tree/main/Vagrant > https://github.com/kbachir/GitNotes/trunk/Vagrant
 ```
 - Run `svn https://github.com/kbachir/GitNotes/trunk/Vagrant`
+- Alternatively, we can clone Github repo. 
