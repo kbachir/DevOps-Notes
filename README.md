@@ -316,7 +316,6 @@ npm start
 ```
 
 ### AWS and Cloud Computing
-### insert image?
 
 - We are using Europe
 - There are usually at least two servers available for each region. 
@@ -371,3 +370,84 @@ After launch, we need to set up some permissions:
 ```
 - Run `svn https://github.com/kbachir/GitNotes/trunk/Vagrant`
 - Alternatively, we can clone Github repo. 
+
+### AMI as a Service
+
+- AWS AMIs: Amazon Machine Image(s) AKA 
+- Simply creates a template that creates your configuration. 
+- This allows you to save the data, much like VirtualBox Snapshots.
+- Helps automate deployment on cloud, esp between numerous people. 
+  
+How to create an AMI:
+- Click on running instance
+- Under Actions > Images > Create Image
+
+To deploy an AMI:
+- Go to AMIs tab on AWS
+- Select AMI and choose "Launch Instance from this AMI" 
+- Fill out configuration for instance in the same way as previous
+- You can select a pre-existing security group so you don't have to redo port stuffs. 
+
+### Monitoring with CloudWatch
+
+What should we mointor?
+- Number of users (Networks)
+- CPU Utilisation
+- Memory Availability
+- Status = 200 OK (can make an API call to check the health of the instance)
+
+Metric notifications > DevOps need to be alerted of issues and logs need to be provided
+Cloudwatch will do this with an alarm that sends an:
+SNS: Simple Nofitication Service
+We then need to respond to the alarm
+If this was a CPU issue, we can auto-scale to increase CPU supply. 
+
+To add dashboard:
+- Manage detailed monitoring
+- Enable detailed monitoring and save
+- Return to the monitoring tab of your instance
+- Add to dashboard > select DevOps
+- Adding metrics and logs to dashboard makes it more understandable and presentable. 
+
+
+### SQS - Simple Queue Service
+
+S3 (AWS service) is simple storage service that is globally available. You can store anything.
+- Used for disaster recovery
+- We can apply Create bucket/object, Read, Update Delete (CRUD) actions 
+
+- Our data is all stored on Ireland EC2 servers atm.
+- In order to make it `highly available` on S3, we can use `AWSCLI` configuration with the right secure access keys. 
+- Our current key is the `/ssh/eng103a.pem` file
+
+S3 Storage Classes:
+- Standard/Normal - You can access data anytime
+- Glacier - Infrequent data access _(you pay less for this)_ 
+    _Ex: Sparta holds onto lots of personal data - current and former employees for example. Sparta needs to be able to access current employee data instantly as needed, whereas they don't need immediate access to ex-employee data._
+Your data is made highly available as it is stored across 3 availability zones that are separated by a certain amount of mileage.  
+
+### Accessing SQS
+
+- Search for S3 on AWS (_note how when we select S3, region automatically changes to 'global'_)
+- `AWSCLI` depends on Python3 to or above to install PIP3
+- Ubuntu uses Python2.7 by default, so we need to ensure that we're using Python3:
+```
+sudo apt install update -y
+sudo apt install upgrade -y
+sudo apt install python3-pip -y
+
+alias python=python3.7
+sudo apt install python3.70-minimal
+alias python=python3.7 <-- we do this to specify which version of Python ubunutu should use>
+
+sudo pip3 install awscli
+
+aws configure
+AWS Access Key ID: {see excel sheet}
+AWS Secret Access Key: {see excel sheet}
+
+Default Region Name:`eu-west-1` (this is the area code of each region on AWS. Check region drop down list to find yours.)
+Default output format: json
+```
+aws s3 ls - searches directories in AWS S3
+On AWS site > S3 > Buckets, you should be able to see the same list
