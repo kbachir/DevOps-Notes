@@ -47,4 +47,4 @@ Security Groups:
 - They are a set of networking rules that are applied to a resource.
 - They are responsible for defining what traffic can enter or leave certain areas (based on port and protocol).
 
-![VPC_Diagram.png] (GitRepo\GitNotes\AWS)
+![VPC_Diagram.png] (AWS/VPC_Diagram.png)
