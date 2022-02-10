@@ -85,3 +85,70 @@ Installing boto3 `pip3 install boto3`
 
 
 CLI Commands: https://docs.aws.amazon.com/cli/latest/userguide/cli-services-s3-commands.html#using-s3-commands-listing-buckets
+
+### Autoscaling and Load Balancing 
+
+- Autoscaling _automatically adjusts_ the amount of computational resources based on the server load.
+- Load balancing _distributes traffic_ between EC2 instances so that no one instance gets overwhelmed. 
+
+*Launch Templates
+*
+> AWS > EC2 Dashboard > Instances Sidebar > Launch Templates > Create Template
+> 
+> Enter name, tick auto scaling guidance, add a tag with the same name
+> 
+> Quick start > Ubuntu 180.04
+> 
+> Instance type > t2..micro
+> 
+> Create security group > enter names and desc > add rule: HTTP, TCP 80, Anywhere. Add rule: ssh, TCP, 22, My IP.
+> 
+> Adv Details > DNS Hostname "Enable resource-based IPV4 DNS Requests". 
+> Adv Details > User Data: 
+> 
+```
+#!/bin/bash
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo apt-get install nginx -y
+sudo systemctl restart nginx 
+sudo systemctl enable nginx
+```
+*Auto Scaling Groups
+*
+> AWS > EC2 Dashboard > Auto Scaling Sidebar > Auto Scaling Groups > Create Auto Scaling Group > Enter Name > Select Launch Template: <Launch Template Name> > Version: Latest 1 > Next
+> 
+> Network > VPD: Default > Avail Zones and subnets: Default 1a, Default 1b, Default 1c _(make sure the port is the same on all, in this case its /20)_ > Next
+> 
+> Load Balancing > Attach to a new load balancer > Application Load Balancer _(this is the strongest one and provides accessibilty for HTTP and HTTPS)_ >  Name: "eng103a-karim-alb" _(note '-' naming convention)_ > Internet-facing > Default routing: Create a target group: "eng103a-karim-lg"
+> 
+> Health Checks > tick EC2 and ELB > 
+> 
+> Configure Group size and scaling policies > desired: 2, minimum: 2, maximum: 3 
+> 
+> Scaling policies > Target tracking scaling policy > scaling policy name: <eng103a-karim-alb> > metric type: avg cpu utilization > Target Value: 25 > Next
+> 
+> to Review > Create Auto Scaling Group
+
+High Availability:
+- There are always servers available in case one goes down, one runs in its place. It means that there's always a minimum # servers running that allow the service to stay up and running.
+
+High Scalability: 
+- Can your app scale in and out in response to # of users or % of CPU Utilisation. 
+- If the load on the load balancer increases more than the threshold we specified, a new server will be spun up and the extra traffic will be diverted to the new one. 
+
+Listener Groups:
+- f
+
+Cloudwatch: 
+-f
+
+SQS:
+-f
+
+User Journey:
+- The user journey needs to be smooth end-to-end. 
+- We need to meet the expectations set. 
+- 
+
+

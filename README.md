@@ -5,7 +5,7 @@
 ### Benefits of DevOps
 
 **Four pillars of DevOps best practice**
-- Ease of Use
+- Ease of Use: human interaction
 - Flexibility (ability to add new features as and when needed by product owner)
 - Robustness - Faster delivery of product
 - Cost - Cost effective (thru automation, CICD pipelines and subsequent efficiency)
@@ -15,7 +15,16 @@
 - A single box or that contains the frontend, backend, database. Essentially the monolith of the entire programme. 
 - We deploy in cloud services like AWS or Azure, turning the "single box architecture into 2 tier architecture".
 
+Monolith: 
+- A single box that has front end and back end. 
+- Programme needs to be interrupted and restarted whenever changes are made or features are added.
 
+2 Tier:
+- Breaking down into client and server applications. Users will not interact with server applications.
+- Will run faster. 
+
+Microservices:
+- Separating a large application into smaller independent parts that each have their own realm of responsibility. 
 ### Development Env
 
 ![Dev Envrionment Diagram](https://user-images.githubusercontent.com/98312982/151946623-1b12406e-1e10-401b-8478-d8c63ea2371d.png)
@@ -390,7 +399,7 @@ To deploy an AMI:
 
 ### Monitoring with CloudWatch
 
-What should we mointor?
+What should we monitor?
 - Number of users (Networks)
 - CPU Utilisation
 - Memory Availability
@@ -451,3 +460,53 @@ Default output format: json
 ```
 aws s3 ls - searches directories in AWS S3
 On AWS site > S3 > Buckets, you should be able to see the same list
+
+### AWS Networking
+
+AWS Networking:
+
+VPC: 
+- Public Virtual Private Cloud
+- In this, there are internet gateways, subnets, route tables and security groups that are available to us. 
+- These together are called a 'network environment'
+
+To increase the level of security, we need to create our own VPC. 
+
+
+IP addresses:
+- A series of unique numbers assigned to a computer
+- This is the ID code of a machine, and is how it communicates and accesses other networks and areas on the internet. 
+
+
+Virtual Private Cloud (VPC):
+- A VPC is a private virtual network dedicated to your AWS account
+- It is isolated from other virtual networks in the AWS cloud
+- In the VPC, the user can change IPs, subnets, internet gateways, routes tables, security groups and networking configs. 
+- You can connect and peer privately to other VPC's across a network. 
+- We could use VPC’s to implement different environments, such as demo, test, staging and production environments. Since production environments don’t need access to our test environments, and vice versa. There are many different use cases for the VPC
+
+Subnet: 
+- A subnet is simply a smaller piece of a larger network, think of it like a room within a house.
+- Subnets can have networking rules applied to them, so you can have multiple subnets with different permissions and rules, allowing you to chop up your VPC into manageable snippets.
+
+Netmask:
+
+
+CIDR Block:
+- When you create a VPC, you must specify a range of IPv4 addresses for the VPC in the form of a Classless Inter-Domain Routing (CIDR) block; for example, 10.0.0.0/16
+- 
+
+
+Route Tables:
+- Route tables decides how traffic flows between subnets. 
+- Can have no public routes, or can be connected to an internet gateway to allow public access. 
+
+
+Internet Gateway:
+- A component that attaches to a VPC, giving it public internet access. 
+
+Security Groups: 
+- Security groups are like firewalls.
+- They are a set of networking rules that are applied to a resource.
+- They are responsible for defining what traffic can enter or leave certain areas (based on port and protocol).
+- 
