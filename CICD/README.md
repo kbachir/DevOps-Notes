@@ -2,7 +2,7 @@
 
 The process:
 
-!(CICD Pipeline)[AWS\CICD Pipeline.png]
+!(CICD Pipeline)[CICD\CICD Pipeline.png]
 
 Localhost > SHH to GitHub > SSH to Jenkins > automated tests in Jenkins Agent and Master nodes > AWS.
 
