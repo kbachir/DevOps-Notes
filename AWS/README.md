@@ -1,5 +1,7 @@
 # AWS Networking
 
+## **Glossary**
+
 **IP addresses:**
 - A series of unique numbers assigned to a computer
 - This is the ID code of a machine, and is how it communicates and accesses other networks and areas on the internet. 
@@ -16,10 +18,10 @@
 - Subnets can have networking rules applied to them, so you can have multiple subnets with different permissions and rules, allowing you to chop up your VPC into manageable snippets.
 
 **CIDR Block (Classless Inter-Domain Routing):**
-- When you create a VPC, you must specify a range of IPv4 addresses for the VPC in the form of a Classless Inter-Domain Routing (CIDR) block; for example, 10.0.0.0/16
-- VPCs and Subnets have unique CIDRs
-- A set of Internet protocol (IP) standards that is used to create unique identifiers for networks and individual devices. The IP addresses allow particular information packets to be sent to specific computers.
-- 
+- A method for allocating IP addresses for; for example, 10.0.0.0/16
+- VPCs and Subnets have CIDRs
+- The CIDR Value denotes the max number of IP addresses that can be used in the VPC.
+  
 **Route Tables:**
 - Route tables decides how traffic flows between subnets. 
 - Can have no public routes, or can be connected to an internet gateway to allow public access.
@@ -43,9 +45,9 @@
 
 ![VPC_Diagram.png](https://github.com/kbachir/GitNotes/blob/main/AWS/VPC_Diagram.png)
 
-```
-**If you were doing everything from scratch, steps are as follows:**
+## **Step-by-step Setup**
 
+```
 Step 1:
 - Select Region (i.e Ireland)
 - Create a VPC - Virtual Private Cloud
@@ -53,24 +55,56 @@ Step 1:
   
 Step 2:  
 - Create Internet Gateway (IG)
-_2.1:_
-- Attach the IG to our VPC 
+    2.1:
+    - Attach the IG to our VPC 
+    - Add only one rule: 0.0.0.0/0
 
 Step 3: 
 - Create a public subnet
-_3.1_:
-- Associate subnet to VPC
+    3.1:
+    - Associate subnet to VPC
 
 Step 4:
 - Create route table/s (RT) for public subnet
-_4.1:_
-- Edit routes to allow IG to allow traffic
-_4.2:_
-- Associate to our public subnet
+    4.1:
+    - Edit routes to allow IG to allow traffic
+    4.2:
+    - Associate to our public subnet
+    - (If you're making a private subnet: add a rule of 0.0.0.0/0 for the NAT instance)
 
 Step 5:
 - Create a security group in our public subnet to allow required ports/traffic
-- Allow port 80
-- Allow Port 3000
+- Allow port 80 for all (public facing)
+- Allow Port 3000 for all (public facing)
+- Allow port 22 for private IP 
 - Allow HTTPS - SSL
 ```
+Rules for the private subnet: 
+- None from our side
+- Step 1: we associate with the subnet
+- We need the db to have internet 
+- So we connect private RT to Public RT so it gets internet from the NAT instance
+- Ideally there should be a third instance with the NAT instance. So if someone wanted to hack in, they'd need to go through app subnet > NAT subnet and then into DB subnet. That's a very long and difficult process. 
+- NAT instance is not a simple EC2 instance: it's a specific type of instance
+- The NAT instance is empty, it's only role is to connect the DB to the internet. 
+- It's essentially just an extra layer of security - an additional subnet you have to get through to access the DB
+
+- In the private DB route table, you connect it to the NAT instance, NOT the private gateway
+
+You select instance > your NAT instance and allow a 0.0.0.0/0 rule
+
+The PEM file is either on the local host or in an app instance. 
+- **^ look into this more.**
+
+
+Data Security:
+- On Prem
+- In transit
+- On cloud
+
+Good example: End-to-end encryption in Whatsapp was introduced after someone stole messages in transit and Whatsapp was fined heavily. 
+
+
+Jumbox/Bastion Server/NAT instance
+- You will be able to access DB instance from app through a NAT instance or a bastion server. The pem file gets stored in the middle ground and not the app. 
+- **^ look into this more**
