@@ -1,3 +1,50 @@
+# Table of Contents
+
+- [Table of Contents](#table-of-contents)
+- [Intro to DevOps](#intro-to-devops)
+  - [The Software Development Life Cycle (SDLC):](#the-software-development-life-cycle-sdlc)
+  - [About DevOps:](#about-devops)
+    - [Monolith, Two-Tier & Microservices Architecture](#monolith-two-tier--microservices-architecture)
+- [Linux and Virtual Machines](#linux-and-virtual-machines)
+  - [Installing Vagrant](#installing-vagrant)
+  - [Linux Commands](#linux-commands)
+    - [Nano Commands](#nano-commands)
+    - [Permissions](#permissions)
+    - [Bash Scripting _(shebang!)_](#bash-scripting-shebang)
+    - [Configuring provision.sh file for Vagrant](#configuring-provisionsh-file-for-vagrant)
+    - [Linux Variables](#linux-variables)
+    - [Environment Variables](#environment-variables)
+  - [Ruby Commands](#ruby-commands)
+  - [NGINX](#nginx)
+    - [Reverse Proxy with NGINX](#reverse-proxy-with-nginx)
+  - [Creating two or more VMs](#creating-two-or-more-vms)
+  - [NodeJS and NPM in the APP VM](#nodejs-and-npm-in-the-app-vm)
+    - [MongoDB in the DB VM](#mongodb-in-the-db-vm)
+- [Amazon Web Services (AWS)](#amazon-web-services-aws)
+  - [AWS and Cloud Computing](#aws-and-cloud-computing)
+  - [AMI as a Service](#ami-as-a-service)
+  - [Monitoring with CloudWatch](#monitoring-with-cloudwatch)
+  - [SQS - Simple Queue Service](#sqs---simple-queue-service)
+    - [Accessing SQS](#accessing-sqs)
+    - [Buckets (CreateReadUpdateDelete)](#buckets-createreadupdatedelete)
+  - [Autoscaling and Load Balancing](#autoscaling-and-load-balancing)
+  - [VPCs and AWS Networking](#vpcs-and-aws-networking)
+    - [Step-by-step Setup](#step-by-step-setup)
+- [Jenkins and CICDE Pipelines](#jenkins-and-cicde-pipelines)
+    - [In Jenkins](#in-jenkins)
+  - [Setting Up a Master Jenkins (AWS)](#setting-up-a-master-jenkins-aws)
+  - [Setting up an SSH on Jenkins](#setting-up-an-ssh-on-jenkins)
+  - [Setting up a webhook](#setting-up-a-webhook)
+    - [Glossary](#glossary)
+  - [Agent Node](#agent-node)
+- [IaC](#iac)
+  - [Ansible and Terraform](#ansible-and-terraform)
+    - [Setting up Ansible Controller](#setting-up-ansible-controller)
+    - [Controller Setup:](#controller-setup)
+    - [Hosts Setup & Informing Controller of Nodes](#hosts-setup--informing-controller-of-nodes)
+    - [Ansible Playbooks](#ansible-playbooks)
+    - [Ansible Adhoc Commands](#ansible-adhoc-commands)
+
 # Intro to DevOps
 
 ## The Software Development Life Cycle (SDLC):
@@ -580,7 +627,7 @@ High Scalability:
 - Can your app scale in and out in response to # of users or % of CPU Utilisation. 
 - If the load on the load balancer increases more than the threshold we specified, a new server will be spun up and the extra traffic will be diverted to the new one.
 
-# VPCs and AWS Networking
+## VPCs and AWS Networking
 
 ![VPC](VPC%20Diagram.png)
 
@@ -624,7 +671,7 @@ High Scalability:
 - NACLs allow you to dictate what and who can leave and re-enter a subnet. Think of it like stamping someone's hand at a concert or football game. 
 - NACL Outbound rules default to off: you must manually add outbound rules, even just to allow all.  
 
-## **Step-by-step Setup**
+### Step-by-step Setup
 
 ```
 Step 1:
@@ -889,10 +936,10 @@ This is how we'll get into the web or db VMs through the controller
 - `ping <IP>` to ping and check if the node is reachable
 
 - `ansible web -m ping`
-web = name of VM
--m = module
--a = argument
-- Can use 'all' in place of 'web' to check all VMs
+`web` = name of VM
+`-m` = module
+`-a` = argument
+- Can use `all` in place of 'web' to check all VMs
 
 ### Hosts Setup & Informing Controller of Nodes
 
@@ -945,8 +992,11 @@ This is defining pre-existing variables and telling ansible that it should use t
 If we want to migrate these to AWS, here's what we do:
 - Update the hosts file with the correct IPs of the instances through 
 
--`ansible-playbook <filename.yml>` to run a playbook
--`- import_playbook: <filename.yml>` to import a playbook into a yml script and run it
+- `ansible-playbook <filename.yml>` to run a playbook
+- `- import_playbook: <filename.yml>` to import a playbook into a yml script and run it
+
+- Copying /code/ folder bc folder linking in vagrant isn't working
+
 
 ### Ansible Adhoc Commands
 
