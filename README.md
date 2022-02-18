@@ -140,43 +140,43 @@ This will install virtualbox, set up a local ip you can reach with your browser 
 Once its up, do `vagrant ssh`, and use logout to leave VM  
 `vagrant halt` stops the vm.
 
-`vagrant ssh <vm>` to access
-`vagrant up <vm>` to launch 
-`vagrant reload <vm>` to restart 
-`vagrant destroy <vm>` to shutdown and reset a VM
-`vagrant halt <vm>` to pause VM but not reset
-`logout/exit` to logout
+- `vagrant ssh <vm>` to access
+- `vagrant up <vm>` to launch 
+- `vagrant reload <vm>` to restart 
+- `vagrant destroy <vm>` to shutdown and reset a VM
+- `vagrant halt <vm>` to pause VM but not reset
+- `logout/exit` to logout
 
 ## Linux Commands
 
-`uname`/`uname -a` for machine info
-`pwd` for present working directory
-`mkdir` to create a new directory
-`ls`/`ls -a` to list directories and files
-`cd <name-of-dir>` to navigate to a directory
-`nano <filename>` to create or access a file
-`cat <filename>` to view contents of a file
-`rm -rf <filename>` to remove a file
-`mv <filename> <new-dir>` to move a file
-`mv <file-name> <new-name>` to rename a file `mv file-name /different/folders/new-name` if not in the same working directory
-`cp <file-source-name> <destination>` to copy a file
-`top` to list all running processes
-`ps aux` to view all running services
-`kill <id-from-ps-aux>` to kill a service/process
+- `uname`/`uname -a` for machine info
+- `pwd` for present working directory
+- `mkdir` to create a new directory
+- `ls`/`ls -a` to list directories and files
+- `cd <name-of-dir>` to navigate to a directory
+- `nano <filename>` to create or access a file
+- `cat <filename>` to view contents of a file
+- `rm -rf <filename>` to remove a file
+- `mv <filename> <new-dir>` to move a file
+- `mv <file-name> <new-name>` to rename a file `mv file-name /different/folders/new-name` if not in the same working directory
+- `cp <file-source-name> <destination>` to copy a file
+- `top` to list all running processes
+- `ps aux` to view all running services
+- `kill <id-from-ps-aux>` to kill a service/process
 
 
-`apt-get package manager install/remove/update/upgrade <package name>` to install packages
-`systemctl status/restart/start/stop <pkg name>` to interact with OS and package
-`sudo` super user do, grants admin privileges
-`su` substitute user, to change user
-`ctrl + c` to return to terminal
+- `apt-get package manager install/remove/update/upgrade <package name>` to install packages
+- `systemctl status/restart/start/stop <pkg name>` to interact with OS and package
+- `sudo` super user do, grants admin privileges
+- `su` substitute user, to change user
+- `ctrl + c` to return to terminal
 
 ### Nano Commands
 
-`nano <filename>` to enter a file
-`ctrl s` to save
-`ctrl x` to exit
-`ctrl O` to writeout 
+- `nano <filename>` to enter a file
+- `ctrl s` to save
+- `ctrl x` to exit
+- `ctrl O` to writeout 
 
 For cheat sheet: https://gist.githubusercontent.com/harssh/7638233/raw/5c491cfc633d5c83f634a917dd23a9259e712567/nano_text_editor_cmds.txt
 
@@ -184,10 +184,10 @@ For cheat sheet: https://gist.githubusercontent.com/harssh/7638233/raw/5c491cfc6
 
 - READ / Write / Executable / Read Only
 - check permissions `ll`
-`chmod +rwx <filename>` to add permissions.
-`chmod -rwx <filename>` to remove permissions.
-`chmod +x <filename>` to allow executable permissions.
-`chmod -wx <filename>` to take out write and executable permissions.
+- `chmod +rwx <filename>` to add permissions.
+- `chmod -rwx <filename>` to remove permissions.
+- `chmod +x <filename>` to allow executable permissions.
+- `chmod -wx <filename>` to take out write and executable permissions.
 
 _Note that “r” is for read, “w” is for write, and “x” is for execute._ 
 
@@ -224,22 +224,16 @@ _Note that “r” is for read, “w” is for write, and “x” is for execute
 
 < _Linux variables work under the same concept as Python vars, they store information_ >
 
-`<var-name>=value` to create a variable
-`echo $<var-name>` to check a variable
+- `<var-name>=value` to create a variable
+- `echo $<var-name>` to check a variable
 
 ### Environment Variables
 
-- Environment variable `env var`
-- Check an env var `printenv key` or `env`
-- Create env var `export` < this will allow the system to recognise the term as an env variable `export LAST_NAME=BACHIR` >
-- Making an env var persistent `sudo nano .bashrc` < _will enter .bashrc file, entering an `export <var_name>` will make that variable persistent_ >
-- delete env var `unset var_name`
-
-`env var` = environment variable
-`printenv <variable>` or `env` to print variables 
-`export` allows the system to recognise the term as an environment variable
-`sudo nano .bashrc` the bashrc file allows you to make an env-var persistent
-`unset var_name` to delete an env-var
+- `env var` = environment variable
+- `printenv <variable>` or `env` to print variables 
+- `export` allows the system to recognise the term as an environment variable
+- `sudo nano .bashrc` the bashrc file allows you to make an env-var persistent
+- `unset var_name` to delete an env-var
 
 ## Ruby Commands
 
@@ -523,19 +517,15 @@ On AWS site > S3 > Buckets, you should be able to see the same list
 S3 does NOT allow underscores. Naming convention is different, must use `-` instead. No caps either.
 aws s3
 
-make bucket `m3` s3://eng103a-karim-devops
+- Make bucket `m3` s3://eng103a-karim-devops
 
 We now have our own bucket in S3
 
-We'll make a file as usual: `sudo nano test.txt`
-
-We can add a file to our bucket through `aws s3 cp test.txt s3://eng103a-karim-devops`
-
-Downloading a file from our bucket to our local pc is the same process but with the source and destination locations reversed `aws s3 cp s3://eng103a-karim-devops ~`
-
-To delete a bucket we use `aws s3 rb s3://`
-
-To delete a file we use `aws s3 rm s3://eng103a-karim-devops/<FileName>`
+- We'll make a file as usual: `sudo nano test.txt`
+- We can add a file to our bucket through `aws s3 cp test.txt s3://eng103a-karim-devops`
+- Downloading a file from our bucket to our local pc is the same process but with the source and destination locations reversed `aws s3 cp s3://eng103a-karim-devops ~`
+- To delete a bucket we use `aws s3 rb s3://`
+- To delete a file we use `aws s3 rm s3://eng103a-karim-devops/<FileName>`
 
 More CLI Commands: https://docs.aws.amazon.com/cli/latest/userguide/cli-services-s3-commands.html#using-s3-commands-listing-buckets
 
@@ -884,11 +874,11 @@ Paste ami ID, select
 
 ### Controller Setup:
 
-`sudo apt-get install software-properties-common -y` 
-`sudo apt-add-repository ppa:ansible/ansible -y`
-`sudo apt-get install ansible -y`
-`sudo apt-get install tree -y`
-`ansible --version` 
+- `sudo apt-get install software-properties-common -y` 
+- `sudo apt-add-repository ppa:ansible/ansible -y`
+- `sudo apt-get install ansible -y`
+- `sudo apt-get install tree -y`
+- `ansible --version` 
 ```
 ssh vagrant@192.168.33.10
 password: vagrant
@@ -896,9 +886,9 @@ password: vagrant
 
 This is how we'll get into the web or db VMs through the controller
 
-`ping <IP>` to ping and check if the node is reachable
+- `ping <IP>` to ping and check if the node is reachable
 
-`ansible web -m ping`
+- `ansible web -m ping`
 web = name of VM
 -m = module
 -a = argument
@@ -955,13 +945,13 @@ This is defining pre-existing variables and telling ansible that it should use t
 If we want to migrate these to AWS, here's what we do:
 - Update the hosts file with the correct IPs of the instances through 
 
-`ansible-playbook <filename.yml>` to run a playbook
-`- import_playbook: <filename.yml>` to import a playbook into a yml script and run it
+-`ansible-playbook <filename.yml>` to run a playbook
+-`- import_playbook: <filename.yml>` to import a playbook into a yml script and run it
 
 ### Ansible Adhoc Commands
 
-`ansible all -a "uname -a"` will return the name of all servers
--a = relates to system (?)
-`ansible all -a "free"`
-`ansible all -a "uptime"`
-`ansible all -m copy -a "src=/filepath/filename.txt dest=/filepath/filename.txt`
+- `ansible all -a "uname -a"` will return the name of all servers
+- `-a` = argument
+- `ansible all -a "free"`
+- `ansible all -a "uptime"`
+-`ansible all -m copy -a "src=/filepath/filename.txt dest=/filepath/filename.txt`
