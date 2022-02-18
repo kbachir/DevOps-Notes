@@ -2,7 +2,7 @@
 
 The process:
 
-!(CICD Pipeline)[CICD\CICD Pipeline.png]
+![CICD Pipeline](https://github.com/kbachir/GitNotes/blob/main/CICD/CICD%20Pipeline.png)
 
 Localhost > SHH to GitHub > SSH to Jenkins > automated tests in Jenkins Agent and Master nodes > AWS.
 
@@ -119,6 +119,7 @@ Continuous Delivery:
 
 Continuous Deployment:
 - This is when the integration and delivery processes result in an automatic deployment or start of the service/update. This could not happen because of things like business decisions etc. 
+<<<<<<< HEAD
 
 Since many of the tasks are now automated, any team can significantly **speed up the delivery of new value, reduce bottlenecks, and avoid common integration problems**. 
 
@@ -146,3 +147,5 @@ mkdir ~/jenkins
 Go to jenkins > manage jenkins > configure cloud 
 For credentials > AWS credentials > enter key id and secret access key from excel file
 Paste ami ID, select 
+=======
+>>>>>>> 7ce1c3e0f1ff450cec006109525c2d7a5c6fb6d5
