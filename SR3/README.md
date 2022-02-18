@@ -73,17 +73,6 @@ To delete a file we use `aws s3 rm s3://eng103a-karim-devops/<FileName>`
 
 
 
-~ = home folder
-. = pwd
-/ = root
-
-_We need to change the permissions of this file to be viewable by all public and authenticated users under the "Permissions" tab._
-
-Task:
-
-Installing boto3 `pip3 install boto3`
-
-
 CLI Commands: https://docs.aws.amazon.com/cli/latest/userguide/cli-services-s3-commands.html#using-s3-commands-listing-buckets
 
 ### Autoscaling and Load Balancing 

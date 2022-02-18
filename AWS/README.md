@@ -108,3 +108,33 @@ Good example: End-to-end encryption in Whatsapp was introduced after someone sto
 Jumbox/Bastion Server/NAT instance
 - You will be able to access DB instance from app through a NAT instance or a bastion server. The pem file gets stored in the middle ground and not the app. 
 - **^ look into this more**
+
+
+Jenkins
+
+Setting up an SSH on Jenkins
+
+- Create new
+- Enter name
+- Discard old builds = 3
+- Github project url = HTTPS link project of repo. When it asks for a url, use https.
+- 
+- Office 365 connector > restrict > we're using a precreated label called sparta-ubuntu-node
+- Source code management > git > repository url: ssh key (repo url is ssh, project url is https)
+- We now need to provide the private key to Jenkins
+  - to add a key:
+  - click add > jenkins > kind: SSH Username with private key > select private key > add: private ssh key (include _all_ text)
+  - chain branch specifier to /main
+  - add build > execute shell > enter path of test folder
+  - in script: `cd app, npm install, npm test`
+  - Build environment > tick provide node & npm (this saves us from having to install node and all packages)
+
+With this, we still had to manually press build now. For a full CICD pipeline, we need this to run automatically from a localhost commit. 
+
+## Setting up a webhook
+
+- Configure Jenkins and ensure Build triggers > "Github hook trigger for GITScm polling" is enabled
+- Go to Github repo > settings > webhooks
+- Add webhook > payload url: Jenkins dashboard url/github-webhook (you have to add the github-webhook part)
+- Content type: application json.
+- 
