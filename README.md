@@ -209,7 +209,10 @@ Once its up, do `vagrant ssh`, and use logout to leave VM
 - `cp <file-source-name> <destination>` to copy a file
 - `top` to list all running processes
 - `ps aux` to view all running services
-- `kill <id-from-ps-aux>` to kill a service/process
+- `sudo kill <id-from-ps-aux>` to kill a service/process
+- `screen`
+- `screen -X` to quit screen
+- `screen -list` to see running screens
 
 
 - `apt-get package manager install/remove/update/upgrade <package name>` to install packages
@@ -997,6 +1000,7 @@ If we want to migrate these to AWS, here's what we do:
 
 - Copying /code/ folder bc folder linking in vagrant isn't working
 
+![Ansible_Diagram](Ansible%20Controller%20V1.png)
 
 ### Ansible Adhoc Commands
 
@@ -1004,4 +1008,4 @@ If we want to migrate these to AWS, here's what we do:
 - `-a` = argument
 - `ansible all -a "free"`
 - `ansible all -a "uptime"`
--`ansible all -m copy -a "src=/filepath/filename.txt dest=/filepath/filename.txt`
+- `ansible all -m copy -a "src=/filepath/filename.txt dest=/filepath/filename.txt`
