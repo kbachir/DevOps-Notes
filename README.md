@@ -44,6 +44,7 @@
     - [Hosts Setup & Informing Controller of Nodes](#hosts-setup--informing-controller-of-nodes)
     - [Ansible Playbooks](#ansible-playbooks)
     - [Ansible Adhoc Commands](#ansible-adhoc-commands)
+    - [Controller with AWS](#controller-with-aws)
 
 # Intro to DevOps
 
@@ -1009,3 +1010,111 @@ If we want to migrate these to AWS, here's what we do:
 - `ansible all -a "free"`
 - `ansible all -a "uptime"`
 - `ansible all -m copy -a "src=/filepath/filename.txt dest=/filepath/filename.txt`
+
+### Controller with AWS
+
+`sudo apt-get update -y` 
+`sudo apt-get upgrade -y` 
+`sudo apt-get install tree` # installing tree package
+`sudo apt-add-repository --yes --update ppa:ansible/ansible` # repository for ansible. Goes to ansible repository and adds it. Basically downloads the folder and specific version before we install
+`sudo apt-get install ansible -y` 
+`sudo apt-get install python3-pip -y` 
+
+`pip3 install awscli`
+`pip3 install boto boto3` # when using pip3, we can't add -y (-y is a linux command)
+
+`sudo apt-get update -y`
+`sudo apt-get upgrade -y` # to check if everything works and to check if anything we just installed needs updating/upgrading
+
+`aws --version` # to check if everything works. Might need to logout and back in to have it reread env variables
+
+`cd /etc/ansible/group_var/all/file.yml` # this is where we store the keys. Very specific folder structure. Below we can see how this is made specifically. 
+
+`sudo mkdir group_vars`
+`cd group_cars`
+`sudo mkdir all`
+`cd all`
+`ansible-vault create pass.yml` # when we run that, its going to prompt us that we're in the VI editor. Need to press `i i` to get into insert mode
+enter keys as so:
+```
+aws_access_key: xxxxx
+aws_secret_key: xxxxx
+```
+`:wq!` to save
+`:q!` to exit without saving
+temp pass = 123
+
+`sudo chmod 600 pass.yml` to change permissions
+`ansible all -m ping` to see what happens. If there was something in the hosts file, we'd have to add `--ask-vault-pass`. Without this added part, ansible won't run the command for the cloud. Needs that authentication for cloud communication. Its also how ansible knows you want to communicate with the cloud instance and not the localhost
+
+the order behind all these dependencies matters btw. Each command is needed for the next one to run properly. There are prerequisites and correct orders.
+
+Task: Launch ex2 in ireland using ubuntu 18.04
+
+`ansible-galaxy collection install amazon.aws`
+
+```
+---
+- hosts: localhost
+  connection: local
+  gather_facts: yes
+  vars_files:
+  - /etc/ansible/group_vars/all/pass.yml
+  vars:
+    key_name: my_aws
+    region: eu-west-1
+    image: ami-07d8796a2b0f8d29c
+    id: "karim-ansible"
+    sec_group: "{{ id }}-sec"
+    ansible_python_interpreter: /usr/bin/python3
+  tasks:
+    - name: Provisioning EC2 instances
+      block:
+      - name: Upload public key to AWS
+        ec2_key:
+          name: "{{ key_name }}"
+          key_material: "{{ lookup('file', '~/.ssh/my_aws.pub') }}"
+          region: "{{ region }}"
+          aws_access_key: "{{aws_access_key}}"
+          aws_secret_key: "{{aws_secret_key}}"
+      - name: Create security group
+        ec2_group:
+          name: "{{ sec_group }}"
+          description: "Sec group for app {{ id }}"
+          region: "{{ region }}"
+          aws_access_key: "{{aws_access_key}}"
+          aws_secret_key: "{{aws_secret_key}}"
+          rules:
+            - proto: tcp
+              ports:
+                - 22
+              cidr_ip: 0.0.0.0/0
+              rule_desc: allow all on ssh port
+            - proto: tcp
+              ports:
+                - 80
+              cidr_ip: 0.0.0.0/0
+              rule_desc: allow all on http port
+        register: result_sec_group
+      - name: Provision instance(s)
+        ec2:
+          aws_access_key: "{{aws_access_key}}"
+          aws_secret_key: "{{aws_secret_key}}"
+          key_name: "{{ key_name }}"
+          id: "{{ id }}"
+          group_id: "{{ result_sec_group.group_id }}"
+          image: "{{ image }}"
+          instance_type: t2.micro
+          region: "{{ region }}"
+          wait: true
+          count: 1
+          instance_tags:
+            Name: eng103a_karim_ansible
+      tags: ['never', 'create_ec2']
+```
+
+Commands used: 
+In ~/.ssh `ssh-keygen -t rsa -b 4096` to generate a new keypair. Adjust `hosts` file and playbook to include these keys.
+
+`sudo ansible-playbook ec2.yml --ask-vault-pass --tags create_ec2 --tags=ec2-create`
+
