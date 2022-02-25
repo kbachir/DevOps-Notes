@@ -46,6 +46,14 @@
     - [Ansible Adhoc Commands](#ansible-adhoc-commands)
     - [Controller with AWS](#controller-with-aws)
     - [Creating and Launching Controller, App and DB on AWS](#creating-and-launching-controller-app-and-db-on-aws)
+- [Terraform!](#terraform)
+    - [Installing Terraform with Powershell](#installing-terraform-with-powershell)
+    - [AWS Keys with Terraform security](#aws-keys-with-terraform-security)
+    - [Configuring VSCode Extensions for ease of use](#configuring-vscode-extensions-for-ease-of-use)
+    - [Terraform Commands](#terraform-commands)
+    - [Terraform file/folder structure](#terraform-filefolder-structure)
+    - [Setting up AWS keys as an env in Windows Machine](#setting-up-aws-keys-as-an-env-in-windows-machine)
+    - [Complete EC2 Instance Provision with Terraform](#complete-ec2-instance-provision-with-terraform)
 
 # Intro to DevOps
 
@@ -1097,6 +1105,7 @@ The order behind all these dependencies matters btw. Each command is needed for 
     image: ami-07d8796a2b0f8d29c
 # AMI ID
     id: "karim-ansible"
+# 
     sec_group: "{{ id }}-sec"
     ansible_python_interpreter: /usr/bin/python3
   tasks:
@@ -1161,7 +1170,7 @@ In ~/.ssh `ssh-keygen -t rsa -b 4096` to generate a new keypair. Adjust `hosts` 
   vars_files:
   - /etc/ansible/group_vars/all/pass.yml
   vars:
-    key_name: my_aws
+    key_name: karim_jenkins
     region: eu-west-1
     image: ami-07d8796a2b0f8d29c
     id: "karim_ansible_controller"
@@ -1174,7 +1183,7 @@ In ~/.ssh `ssh-keygen -t rsa -b 4096` to generate a new keypair. Adjust `hosts` 
       - name: Upload public key to AWS
         ec2_key:
           name: "{{ key_name }}"
-          key_material: "{{ lookup('file', '~/.ssh/my_aws.pub') }}"
+          key_material: "{{ lookup('file', '~/karim_jenkins.pub') }}"
           region: "{{ region }}"
           aws_access_key: "{{aws_access_key}}"
           aws_secret_key: "{{aws_secret_key}}"
@@ -1202,16 +1211,16 @@ In ~/.ssh `ssh-keygen -t rsa -b 4096` to generate a new keypair. Adjust `hosts` 
           aws_access_key: "{{aws_access_key}}"
           aws_secret_key: "{{aws_secret_key}}"
           key_name: "{{ key_name }}"
-          id: "{{ id }}"
           group_id: "{{ result_sec_group.group_id }}"
           image: "{{ image }}"
           instance_type: t2.micro
           region: "{{ region }}"
           wait: true
-          count: 1
+          count: 2
           instance_tags:
             Name: eng103a_karim_controller
       tags: ['never', 'create_ec2']
+
 
 
 ## PROVISION APP ##
@@ -1304,4 +1313,211 @@ In ~/.ssh `ssh-keygen -t rsa -b 4096` to generate a new keypair. Adjust `hosts` 
 
 - scp -i <path to your access key>.pem -r <origin> ubuntu@ec2<long-ip>:~
 - ssh-keygen -t rsa -b 4096
+```
+
+# Terraform!
+
+### Installing Terraform with Powershell
+- Run Windows Powershell as Administrator
+- run `Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))`
+- Check Chocolately is properly installed with `choco -?`
+- Run `choco install terraform`
+- Check Terraform is properly installed with `terraform -version`
+ 
+### AWS Keys with Terraform security
+![Terraform_with_Ansible](terraform_with_ansible-new.jpg)
+
+### Configuring VSCode Extensions for ease of use
+Install the following extensions on VSCode:
+
+- _HashiCorp Terraform_: Syntax highlighting and autocompletion for Terraform
+- _Terraform Autocomplete_: Autocomplete for AWS resources with terraform
+- _Terraform doc snippets_: Terraform code snippets (>8000) pulled from example...
+
+### Terraform Commands
+- `terraform init` to initialise terraform
+- `terraform plan` reads your script and checks it. Similar to ansible `--check`
+- `terraform apply` to run the playbook/implement the script
+- `terraform destroy` to delete everything
+- `terraform` for a full list of terraform commands
+
+### Terraform file/folder structure
+- `.tf` extension - `main.tf` is your 'runner' file; the file that executes everything
+- Apply 'DRY' - 'Don't repeat yourself'
+
+### Setting up AWS keys as an env in Windows Machine
+- `AWS_ACCESS_KEY_ID` for aws access key variable
+- `AWS_SECRET_ACCESS_KEY` for aws secret key variable
+- Windows key > search `env` > click 'Environment Variables...' > enter the AWS Key variables into 'User variables" so it's specific to this user and not the entire system. Follow specific AWS key syntax - case sensitive. 
+
+### Complete EC2 Instance Provision with Terraform
+```
+# Let's plan what we want to do in this script:
+
+# Terraform init - will download any required packages
+
+# Set cloud provider - we inform terraform which cloud provider for it to speak to
+
+### provider "aws" {
+
+# Set the region
+###  region = "eu-west-1"
+# mind the indenation
+# inputs like "region" and "provider" are case-sensitive
+### }
+
+
+# when we run "terraform init", it will create numerous files like '.terraform.lock.hcl'
+# init with terraform
+# What do we want to launch
+# Automate the process of creating EC2 instance
+
+# Name of the resource
+
+## PROVISIONING AN INSTANCE ##
+### resource "aws_instance" "karim_tf_app" { # within these curly brackets, we provide all the info for the instance
+
+# Which AMI to use
+## ami = "ami-07d8796a2b0f8d29c" # this works, but let's use a variable here instead:
+###  ami = var.app_ami_id
+
+# What type of instance
+##  instance_type = "t2.micro"
+###  instance_type = var.instance_type
+
+# Do you want a public IP
+##  associate_public_ip_address = true
+###  associate_public_ip_address = var.public_ip_on
+
+# What would you like to name your instance
+##  tags = {
+#    Name = "103a_karim_tf_app"
+##  }
+###  tags = var.tag
+
+# Add a key pair
+##  key_name =  "eng103a_karim"
+###  key_name = var.key_pair
+###}
+
+=======================================================================================================================
+
+provider "aws" {
+  region = var.region
+}
+
+## PROVISIONING A VPC ##
+resource "aws_vpc" "karim_tf_vpc" {
+  cidr_block = "10.0.0.0/16"
+  instance_tenancy = "default"
+  tags = {
+    Name = "karim_tf_vpc"
+  }
+}
+
+## PROVISIONING A SUBNET ##
+resource "aws_subnet" "karim_tf_subnet" {
+  vpc_id            = aws_vpc.karim_tf_vpc.id
+  cidr_block        = "10.0.1.0/24"
+  tags = {
+    Name = "karim_tf_subnet"
+  }
+}
+
+## PROVISIONING A SECURITY GROUP ##
+resource "aws_security_group" "karim_tf_sg" {
+  name        = "karim_tf_sg"
+  description = "Allow SSH"
+  vpc_id      = aws_vpc.karim_tf_vpc.id
+  tags = {
+    Name = "karim_tf_sg"
+  }
+
+  ingress {
+    description      = "My IP only"
+    from_port        = 22
+    to_port          = 22
+    protocol         = "TCP"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description      = "app"
+    from_port        = 3000
+    to_port          = 3000
+    protocol         = "TCP"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description      = "HTTP"
+    from_port        = 80
+    to_port          = 80
+    protocol         = "TCP"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}
+
+## PROVISIONING AN INTERNET GATEWAY ##
+resource "aws_internet_gateway" "karim_tf_vpc_ig" {
+  vpc_id = aws_vpc.karim_tf_vpc.id
+
+  tags = {
+    Name = "karim_tf_ig"
+  }
+}
+
+## PROVISIONING A ROUTE TABLE ##
+resource "aws_route_table" "karim_tf_vpc_rt" {
+    vpc_id = aws_vpc.karim_tf_vpc.id
+
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = aws_internet_gateway.karim_tf_vpc_ig.id
+    }
+
+    tags = {
+        Name = "karim_tf_rt"
+    }
+}
+
+## PROVISIONING A ROUTE TABLE ASSOCIATION ## 
+resource "aws_route_table_association" "karim_tf_rt_association" {
+    subnet_id = aws_subnet.karim_tf_subnet.id
+    route_table_id = aws_route_table.karim_tf_vpc_rt.id
+}
+
+## PROVISIONING JENKINS MASTER ## 
+
+resource "aws_instance" "karim_tf_jenkinsmaster" {
+  ami = "ami-<id>"
+  instance_type = var.instance_type
+  subnet_id = aws_subnet.karim_tf_subnet.id
+  vpc_security_group_ids = [aws_security_group.karim_tf_sg.id]
+  associate_public_ip_address = var.public_ip_on
+  tags = {
+  Name = "karim_tf_jenkinsmaster"
+  }
+  key_name = var.key_pair
+}
+
+## LAUNCHING ANSIBLE CONTROLLER AMI ## 
+
+resource "aws_instance" "karim_tf_ansible_instance" {
+  ami = "ami-<id>"
+  instance_type = var.instance_type
+  subnet_id = aws_subnet.karim_tf_subnet.id
+  vpc_security_group_ids = [aws_security_group.karim_tf_sg.id]
+  associate_public_ip_address = var.public_ip_on
+  tags = var.tag
+  key_name = var.key_pair
+}
 ```
