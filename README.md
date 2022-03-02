@@ -62,6 +62,7 @@
     - [Commands // First time operation](#commands--first-time-operation)
     - [Port Mapping](#port-mapping)
     - [Playing with NGINX Container](#playing-with-nginx-container)
+    - [Container Lifecycle](#container-lifecycle)
 
 # Intro to DevOps
 
@@ -1616,3 +1617,7 @@ We're inside a linux system at the moment, so run the following:
 - `apt-get upgrade -y`
 - `apt-get install nano` we need to install the nano package in order to enter the _index.html_ file
 - `nano index.html`
+
+### Container Lifecycle
+
+![ContainerLifecycle](ContainerLifecycle.png)
