@@ -1601,7 +1601,8 @@ For more examples and ideas, visit:
 - `docker exec -it <container-id> sh` this is essentially SSH'ing into the container. `exec` = execute, `-it` = interact, `sh` = shell. Running `bash` instead 
 - `docker cp <file.name> <containerid>:<path>/<file.name>` to copy a file into a container. i.e `docker cp index.html containerid:/usr/share/nginx/html/index.html` 
 - `docker commit <container-id> <username>/<name>:<tag>` to commit a new version 
-`docker push <username>/<repo-name>:<tag-name>` to push to Dockerhub
+- `docker push <username>/<repo-name>:<tag-name>` to push to Dockerhub
+- `docker build -t <username>/<repo-name> .` to create a build from our Dockerfile. This will allow us to push to Dockerhub using the same username/repo format. `-t` = tags `.` = telling docker to find the Dockerfile in this location
 
 ### Port Mapping
 
