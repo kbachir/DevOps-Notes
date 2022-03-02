@@ -46,6 +46,7 @@
     - [Ansible Adhoc Commands](#ansible-adhoc-commands)
     - [Controller with AWS](#controller-with-aws)
     - [Creating and Launching Controller, App and DB on AWS](#creating-and-launching-controller-app-and-db-on-aws)
+    - [Using Jenkins with Ansible](#using-jenkins-with-ansible)
 - [Terraform!](#terraform)
     - [Installing Terraform with Powershell](#installing-terraform-with-powershell)
     - [AWS Keys with Terraform security](#aws-keys-with-terraform-security)
@@ -54,6 +55,7 @@
     - [Terraform file/folder structure](#terraform-filefolder-structure)
     - [Setting up AWS keys as an env in Windows Machine](#setting-up-aws-keys-as-an-env-in-windows-machine)
     - [Complete EC2 Instance Provision with Terraform](#complete-ec2-instance-provision-with-terraform)
+    - [Terraform with AWS](#terraform-with-aws)
 - [Microservices](#microservices)
   - [Containerisation with Docker!](#containerisation-with-docker)
     - [Why use Monolithic instead?](#why-use-monolithic-instead)
@@ -540,8 +542,7 @@ To add dashboard:
 
 ## SQS - Simple Queue Service
 
-![SR3](SR3CDN.png)
-
+![SR3](images/SR3CDN.png)
 
 SR3 (AWS service) is simple storage service that is globally available. You can store anything.
 - Used for disaster recovery
@@ -653,7 +654,7 @@ High Scalability:
 
 ## VPCs and AWS Networking
 
-![VPC](VPC%20Diagram.png)
+![VPC](images/VPC%20Diagram.png)
 
 **IP addresses:**
 - A series of unique numbers assigned to a computer
@@ -759,7 +760,7 @@ Good example: End-to-end encryption in Whatsapp was introduced after someone sto
 
 The process:
 
-![CICD Pipeline](CICD%20Pipeline.png)
+![CICD Pipeline](images/CICD%20Pipeline.png)
 
 Localhost > SHH to GitHub > SSH to Jenkins > automated tests in Jenkins Agent and Master nodes > AWS.
 
@@ -1021,7 +1022,7 @@ If we want to migrate these to AWS, here's what we do:
 
 - Copying /code/ folder bc folder linking in vagrant isn't working
 
-![Ansible_Diagram](Ansible%20Controller%20V1.png)
+![Ansible_Diagram](images/Ansible%20Controller%20V1.png)
 
 ### Ansible Adhoc Commands
 
@@ -1326,6 +1327,10 @@ In ~/.ssh `ssh-keygen -t rsa -b 4096` to generate a new keypair. Adjust `hosts` 
 - ssh-keygen -t rsa -b 4096
 ```
 
+### Using Jenkins with Ansible
+
+![jenkins_ansible](images/jenkins_ansible.png)
+
 # Terraform!
 
 ### Installing Terraform with Powershell
@@ -1532,6 +1537,8 @@ resource "aws_instance" "karim_tf_ansible_instance" {
   key_name = var.key_pair
 }
 ```
+### Terraform with AWS
+![terraform_aws](images/Terraform_AWS.png)
 
 # Microservices
 
@@ -1621,4 +1628,4 @@ We're inside a linux system at the moment, so run the following:
 
 ### Container Lifecycle
 
-![ContainerLifecycle](ContainerLifecycle.png)
+![ContainerLifecycle](images/ContainerLifecycle.png)

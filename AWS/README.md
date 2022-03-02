@@ -1,6 +1,228 @@
-# AWS Networking
+[Amazon Web Services (AWS)](#amazon-web-services-aws)
+  - [AWS and Cloud Computing](#aws-and-cloud-computing)
+  - [AMI as a Service](#ami-as-a-service)
+  - [Monitoring with CloudWatch](#monitoring-with-cloudwatch)
+  - [SQS - Simple Queue Service](#sqs---simple-queue-service)
+    - [Accessing SQS](#accessing-sqs)
+    - [Buckets (CreateReadUpdateDelete)](#buckets-createreadupdatedelete)
+  - [Autoscaling and Load Balancing](#autoscaling-and-load-balancing)
+  - [VPCs and AWS Networking](#vpcs-and-aws-networking)
+    - [Step-by-step Setup](#step-by-step-setup)
 
-## **Glossary**
+
+
+# Amazon Web Services (AWS)
+
+## AWS and Cloud Computing
+
+- We are using Europe
+- There are usually at least two servers available for each region. 
+- Choose location based on who you're deploying for. ATM we only have access to Ireland servers. 
+
+EC2 (_Amazon Elastic Compute Cloud_)
+
+- Enables you to have multiple instances with as many or as few virtual servers as you need.
+- Allows you to configure security networking, and manage storage. Can scale up and down as needed.
+- Saves for us because migrated servers are managed by Amazon and we can get access to great hardware and internet easily. 
+- Go global in relative seconds. 
+
+Migration of Demo App:
+
+_Steps include_:
+
+- Selecting Linux Ubuntu 16.04-18.04
+- Migrate app data
+- Expose needed ports
+- Launch!
+
+_To Begin:_
+
+- Switch location in top right first. `Select Ireland` atm. 
+- Go to EC2
+- `Launch Instance` (orange button)
+- Pick `Ubuntu server 18.04 LS`
+- Leave default rules for T2.micro
+- Leave subnet alone for now
+- Add a new key in the format: `NAME - ENG103A_KARIM`
+- Create a new security group and set the name and desc as above
+- IP Rules: `SSH; TCP; 22; My IP; "My IP Only"` 
+- Review & Launch
+- Create an ~/.ssh folder locally and add the private key file into it.
+- Upon launch, select "Choose an existing key pair" and find `DevOps103a RSA`
+
+Then:
+
+Find the instance and security group:
+- Click `Security Group`
+- Select `Edit inbound rules`
+- Set an inbound rule for `HTTP` and `any ipv4`
+
+After launch, we need to set up some permissions:
+
+- `chmod 400 eng103a.pem` to make the DevOps key only readable only to owner
+- `ssh -i "eng103a.pem" ubuntu@ec2-3-251-89-188.eu-west-1.compute.amazonaws.com` to connect to the machine, found in the instance list > start
+- Go to browser and check ports, it should display NGINX is installed.
+- In the terminal, get your github link and replace `tree/master` with `trunk` like below. We modify it to work with subversion as so: 
+```
+  https://github.com/kbachir/GitNotes/tree/main/Vagrant > https://github.com/kbachir/GitNotes/trunk/Vagrant
+```
+- Run `svn https://github.com/kbachir/GitNotes/trunk/Vagrant`
+- Alternatively, we can clone Github repo. 
+
+## AMI as a Service
+
+- AWS AMIs: Amazon Machine Image(s) AKA 
+- Simply creates a template that creates your configuration. 
+- This allows you to save the data, much like VirtualBox Snapshots.
+- Helps automate deployment on cloud, esp between numerous people. 
+  
+How to create an AMI:
+- Click on running instance
+- Under Actions > Images > Create Image
+
+To deploy an AMI:
+- Go to AMIs tab on AWS
+- Select AMI and choose "Launch Instance from this AMI" 
+- Fill out configuration for instance in the same way as previous
+- You can select a pre-existing security group so you don't have to redo port stuffs. 
+
+## Monitoring with CloudWatch
+
+What should we monitor?
+- Number of users (Networks)
+- CPU Utilisation
+- Memory Availability
+- Status = 200 OK (can make an API call to check the health of the instance)
+
+Metric notifications > DevOps need to be alerted of issues and logs need to be provided
+Cloudwatch will do this with an alarm that sends an:
+SNS: Simple Nofitication Service
+We then need to respond to the alarm
+If this was a CPU issue, we can auto-scale to increase CPU supply. 
+
+To add dashboard:
+- Manage detailed monitoring
+- Enable detailed monitoring and save
+- Return to the monitoring tab of your instance
+- Add to dashboard > select DevOps
+- Adding metrics and logs to dashboard makes it more understandable and presentable. 
+
+
+## SQS - Simple Queue Service
+
+![SR3](images/SR3CDN.png)
+
+SR3 (AWS service) is simple storage service that is globally available. You can store anything.
+- Used for disaster recovery
+- We can apply Create bucket/object, Read, Update Delete (CRUD) actions 
+
+- Our data is all stored on Ireland EC2 servers atm.
+- In order to make it `highly available` on S3, we can use `AWSCLI` configuration with the right secure access keys. 
+- Our current key is the `/ssh/eng103a.pem` file
+
+S3 Storage Classes:
+- Standard/Normal - You can access data anytime
+- Glacier - Infrequent data access _(you pay less for this)_ 
+    _Ex: Sparta holds onto lots of personal data - current and former employees for example. Sparta needs to be able to access current employee data instantly as needed, whereas they don't need immediate access to ex-employee data._
+Your data is made highly available as it is stored across 3 availability zones that are separated by a certain amount of mileage.  
+
+### Accessing SQS
+
+- Search for S3 on AWS (_note how when we select S3, region automatically changes to 'global'_)
+- `AWSCLI` depends on Python3 to or above to install PIP3
+- Ubuntu uses Python2.7 by default, so we need to ensure that we're using Python3:
+```
+sudo apt install update -y
+sudo apt install upgrade -y
+sudo apt install python3-pip -y
+
+alias python=python3.7
+sudo apt install python3.70-minimal
+alias python=python3.7 <-- we do this to specify which version of Python ubunutu should use>
+
+sudo pip3 install awscli
+
+aws configure
+AWS Access Key ID: {see excel sheet}
+AWS Secret Access Key: {see excel sheet}
+
+Default Region Name:`eu-west-1` (this is the area code of each region on AWS. Check region drop down list to find yours.)
+Default output format: json
+```
+`aws s3 ls` - searches directories in AWS S3
+On AWS site > S3 > Buckets, you should be able to see the same list
+
+### Buckets (CreateReadUpdateDelete)
+
+S3 does NOT allow underscores. Naming convention is different, must use `-` instead. No caps either.
+aws s3
+
+- Make bucket `m3` s3://eng103a-karim-devops
+
+We now have our own bucket in S3
+
+- We'll make a file as usual: `sudo nano test.txt`
+- We can add a file to our bucket through `aws s3 cp test.txt s3://eng103a-karim-devops`
+- Downloading a file from our bucket to our local pc is the same process but with the source and destination locations reversed `aws s3 cp s3://eng103a-karim-devops ~`
+- To delete a bucket we use `aws s3 rb s3://`
+- To delete a file we use `aws s3 rm s3://eng103a-karim-devops/<FileName>`
+
+More CLI Commands: https://docs.aws.amazon.com/cli/latest/userguide/cli-services-s3-commands.html#using-s3-commands-listing-buckets
+
+## Autoscaling and Load Balancing 
+
+- Autoscaling _automatically adjusts_ the amount of computational resources based on the server load.
+- Load balancing _distributes traffic_ between EC2 instances so that no one instance gets overwhelmed. 
+
+*Launch Templates
+*
+> AWS > EC2 Dashboard > Instances Sidebar > Launch Templates > Create Template
+> 
+> Enter name, tick auto scaling guidance, add a tag with the same name
+> 
+> Quick start > Ubuntu 180.04
+> 
+> Instance type > t2..micro
+> 
+> Create security group > enter names and desc > add rule: HTTP, TCP 80, Anywhere. Add rule: ssh, TCP, 22, My IP.
+> 
+> Adv Details > DNS Hostname "Enable resource-based IPV4 DNS Requests". 
+> Adv Details > User Data: 
+> 
+```
+#!/bin/bash
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo apt-get install nginx -y
+sudo systemctl restart nginx 
+sudo systemctl enable nginx
+```
+*Auto Scaling Groups
+*
+> AWS > EC2 Dashboard > Auto Scaling Sidebar > Auto Scaling Groups > Create Auto Scaling Group > Enter Name > Select Launch Template: <Launch Template Name> > Version: Latest 1 > Next
+> 
+> Network > VPD: Default > Avail Zones and subnets: Default 1a, Default 1b, Default 1c _(make sure the port is the same on all, in this case its /20)_ > Next
+> 
+> Load Balancing > Attach to a new load balancer > Application Load Balancer _(this is the strongest one and provides accessibilty for HTTP and HTTPS)_ >  Name: "eng103a-karim-alb" _(note '-' naming convention)_ > Internet-facing > Default routing: Create a target group: "eng103a-karim-lg"
+> 
+> Health Checks > tick EC2 and ELB > 
+> 
+> Configure Group size and scaling policies > desired: 2, minimum: 2, maximum: 3 
+> 
+> Scaling policies > Target tracking scaling policy > scaling policy name: <eng103a-karim-alb> > metric type: avg cpu utilization > Target Value: 25 > Next
+> 
+> to Review > Create Auto Scaling Group
+
+High Availability:
+- There are always servers available in case one goes down, one runs in its place. It means that there's always a minimum # servers running that allow the service to stay up and running.
+
+High Scalability: 
+- Can your app scale in and out in response to # of users or % of CPU Utilisation. 
+- If the load on the load balancer increases more than the threshold we specified, a new server will be spun up and the extra traffic will be diverted to the new one.
+
+## VPCs and AWS Networking
+
+![VPC](images/VPC%20Diagram.png)
 
 **IP addresses:**
 - A series of unique numbers assigned to a computer
@@ -42,10 +264,7 @@
 - NACLs allow you to dictate what and who can leave and re-enter a subnet. Think of it like stamping someone's hand at a concert or football game. 
 - NACL Outbound rules default to off: you must manually add outbound rules, even just to allow all.  
 
-
-![VPC_Diagram.png](https://github.com/kbachir/GitNotes/blob/main/AWS/VPC_Diagram.png)
-
-## **Step-by-step Setup**
+### Step-by-step Setup
 
 ```
 Step 1:
@@ -103,38 +322,3 @@ Data Security:
 - On cloud
 
 Good example: End-to-end encryption in Whatsapp was introduced after someone stole messages in transit and Whatsapp was fined heavily. 
-
-
-Jumbox/Bastion Server/NAT instance
-- You will be able to access DB instance from app through a NAT instance or a bastion server. The pem file gets stored in the middle ground and not the app. 
-- **^ look into this more**
-
-
-Jenkins
-
-Setting up an SSH on Jenkins
-
-- Create new
-- Enter name
-- Discard old builds = 3
-- Github project url = HTTPS link project of repo. When it asks for a url, use https.
-- 
-- Office 365 connector > restrict > we're using a precreated label called sparta-ubuntu-node
-- Source code management > git > repository url: ssh key (repo url is ssh, project url is https)
-- We now need to provide the private key to Jenkins
-  - to add a key:
-  - click add > jenkins > kind: SSH Username with private key > select private key > add: private ssh key (include _all_ text)
-  - chain branch specifier to /main
-  - add build > execute shell > enter path of test folder
-  - in script: `cd app, npm install, npm test`
-  - Build environment > tick provide node & npm (this saves us from having to install node and all packages)
-
-With this, we still had to manually press build now. For a full CICD pipeline, we need this to run automatically from a localhost commit. 
-
-## Setting up a webhook
-
-- Configure Jenkins and ensure Build triggers > "Github hook trigger for GITScm polling" is enabled
-- Go to Github repo > settings > webhooks
-- Add webhook > payload url: Jenkins dashboard url/github-webhook (you have to add the github-webhook part)
-- Content type: application json.
-- 
